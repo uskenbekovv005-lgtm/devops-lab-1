@@ -2,38 +2,71 @@ pipeline {
 
     agent any 
 
+ 
+
     stages { 
 
-        stage('Build') { 
+        // СТАДИЯ 1: Получение кода 
+
+        stage('Checkout Code') { 
 
             steps { 
 
-                echo 'Stage 1: Building application...' 
+                echo 'Забираем код из GitHub...' 
+
+                checkout scm 
 
             } 
 
         } 
 
-        stage('Test') { 
+         
+
+        // СТАДИЯ 2: Проверка файлов 
+
+        stage('Check Files') { 
 
             steps { 
 
-                echo 'Stage 2: Running automated tests...' 
+                echo '📄 Проверяем созданные файлы...' 
 
-            } 
+                sh ''' 
 
-        } 
+                    echo "=== ФАЙЛЫ В РЕПОЗИТОРИИ ===" 
 
-        stage('Deploy') { 
+                    ls -la 
 
-            steps { 
+                    echo "" 
 
-                echo 'Stage 3: Deploying to staging...' 
+                    echo "=== ПРОВЕРКА НАШИХ ФАЙЛОВ ===" 
 
-            } 
+                    if [ -f Dockerfile ]; then 
 
-        } 
+                        echo "Dockerfile найден" 
 
+                        echo "Содержимое Dockerfile:" 
+
+                        head -10 Dockerfile 
+
+                    else 
+
+                        echo "Dockerfile не найден" 
+
+                    fi 
+
+                     
+
+                    if [ -f requirements.txt ]; then 
+
+                        echo "requirements.txt найден" 
+
+                    else 
+
+                        echo "requirements.txt не найден" 
+
+                    fi 
+
+                     
     } 
 
 } 
